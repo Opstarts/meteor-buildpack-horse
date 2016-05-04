@@ -122,13 +122,15 @@ fi
 echo "-----> Bundling bundle"
 
 ## Build webworker
-(cd $APP_CHECKOUT_DIR/webworker && npm install)
-(cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors &)
+echo "-----> Opstarts: Building webworker"
+cd $APP_CHECKOUT_DIR/webworker && npm install
+cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
 
 cd $APP_SOURCE_DIR
 
 ## OPSTARTS
-(./clone_repo.sh)
+echo "-----> Opstarts: Cloning repo"
+./clone_repo.sh
 
 
 # Determine if we have --server-only flag capability. Allow non-zero return from grep.
