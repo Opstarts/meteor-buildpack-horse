@@ -63,8 +63,10 @@ METEOR_DIR=`mktemp -d "$BUILDPACK_DIR"/meteor-XXXX`
 # Where we'll put things we compile.
 COMPILE_DIR_SUFFIX=".meteor/heroku_build"
 COMPILE_DIR="$APP_CHECKOUT_DIR"/"$COMPILE_DIR_SUFFIX"
-# Try to minimize meteor's printing
-METEOR_PRETTY_OUTPUT=0
+# Try to minimize meteor's printing, unless we're running verbosely.
+if [ -z "$BUILDPACK_VERBOSE" ]; then
+  METEOR_PRETTY_OUTPUT=0
+fi
 
 # Create directories as needed.
 mkdir -p "$APP_CHECKOUT_DIR" "$METEOR_DIR" "$COMPILE_DIR"
@@ -151,7 +153,8 @@ if [ -z "$SERVER_ONLY_FLAG" ]; then
   echo "-----> Moving on."
 fi
 
-# If we use npm on root, run npm install.
+# If we use npm on root, run npm install.  Don't use `--production` here, as we
+# may need devDependencies (e.g. webpack) in order to build the meteor app.
 if [ -e "$APP_SOURCE_DIR"/package.json ]; then
   npm install
 fi
@@ -176,9 +179,10 @@ HOME=$METEOR_DIR $METEOR build --server $ROOT_URL $SERVER_ONLY_FLAG --directory 
 mv $BUNDLE_DEST/bundle "$COMPILE_DIR/app"
 rmdir $BUNDLE_DEST
 
-# If we use npm, run npm install.
+# Run npm install on the built slug; only for `--production` dependencies.
 if [ -e "$COMPILE_DIR"/app/programs/server/package.json ]; then
-  cd "$COMPILE_DIR"/app/programs/server && npm install
+  cd "$COMPILE_DIR"/app/programs/server
+  npm install --production
 fi
 
 #
