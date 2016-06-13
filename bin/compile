@@ -131,9 +131,8 @@ cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
 cd $APP_SOURCE_DIR
 
 ## OPSTARTS
-echo "-----> Opstarts: Cloning repo"
-./clone_repo.sh
-
+cd $APP_SOURCE_DIR/packages/opstarts-calcengine && npm install --production
+cd $APP_SOURCE_DIR
 
 # Determine if we have --server-only flag capability. Allow non-zero return from grep.
 echo "-----> Checking if this meteor version supports --server-only"
