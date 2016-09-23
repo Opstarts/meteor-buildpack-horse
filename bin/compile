@@ -110,13 +110,14 @@ echo "-----> Meteor version: `HOME=$METEOR_DIR $METEOR --version`"
 #
 echo "-----> Bundling bundle"
 
+## OPSTARTS
+cd $APP_SOURCE_DIR/packages/opstarts-calcengine && $METEOR_NPM install --production
+
 ## Build webworker
 echo "-----> Opstarts: Building webworker"
-cd $APP_CHECKOUT_DIR/webworker && npm install
+cd $APP_CHECKOUT_DIR/webworker && $METEOR_NPM install
 cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
 
-## OPSTARTS
-cd $APP_SOURCE_DIR/packages/opstarts-calcengine && npm install --production
 cd "$APP_SOURCE_DIR"
 
 # Determine if we have --server-only flag capability. Allow non-zero return from grep.
