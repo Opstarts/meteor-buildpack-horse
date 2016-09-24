@@ -108,15 +108,6 @@ echo "-----> Meteor version: `HOME=$METEOR_DIR $METEOR --version`"
 #
 # Build the meteor app!
 #
-echo "-----> Bundling bundle"
-
-## OPSTARTS
-cd $APP_SOURCE_DIR/packages/opstarts-calcengine && $METEOR_NPM install --production
-
-## Build webworker
-echo "-----> Opstarts: Building webworker"
-cd $APP_CHECKOUT_DIR/webworker && $METEOR_NPM install
-cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
 
 cd "$APP_SOURCE_DIR"
 
@@ -170,6 +161,14 @@ echo "----->    and npm: `$METEOR_NPM --version`"
 if [ -e "$APP_SOURCE_DIR"/package.json ]; then
   $METEOR_NPM install
 fi
+
+## OPSTARTS
+cd $APP_SOURCE_DIR/packages/opstarts-calcengine && $METEOR_NPM install --production
+
+## Build webworker
+echo "-----> Opstarts: Building webworker"
+cd $APP_CHECKOUT_DIR/webworker && $METEOR_NPM install
+cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
 
 # Related to https://github.com/meteor/meteor/issues/2796 and 
 # https://github.com/meteor/meteor/issues/2606.  Some packages only build their
