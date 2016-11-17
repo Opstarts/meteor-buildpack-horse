@@ -42,6 +42,8 @@ if [ -n "${BUILDPACK_CLEAR_CACHE+1}" ]; then
   rm -rf "$CACHE_DIR"
 fi
 
+METEOR_APP_DIR=app
+
 #
 # Find the meteor app ($APP_SOURCE_DIR).
 #
@@ -174,6 +176,16 @@ if [ -e "$APP_SOURCE_DIR"/package.json ]; then
   $METEOR_NPM install
 fi
 
+## OPSTARTS
+cd $APP_SOURCE_DIR/packages/opstarts-calcengine && $METEOR_NPM install --production
+
+## Build webworker
+echo "-----> Opstarts: Building webworker"
+cd $APP_CHECKOUT_DIR/webworker && $METEOR_NPM install
+cd $APP_CHECKOUT_DIR/webworker && ./node_modules/.bin/webpack --colors
+
+cd "$APP_SOURCE_DIR"
+
 # Related to https://github.com/meteor/meteor/issues/2796 and 
 # https://github.com/meteor/meteor/issues/2606.  Some packages only build their
 # assets at runtime, and thus they are not available for bundling unless meteor
@@ -191,6 +203,9 @@ fi
 
 echo "-----> Building Meteor app with ROOT_URL: $ROOT_URL"
 BUNDLE_DEST=`mktemp -d "$BUILDPACK_DIR/build-XXXX"`
+
+# prune npm before building
+$METEOR_NPM prune --production
 
 # The actual invocation of `meteor build`!
 METEOR build $BUILD_OPTIONS --server $ROOT_URL $SERVER_ONLY_FLAG --directory $BUNDLE_DEST
